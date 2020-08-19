@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
 	"os/user"
@@ -41,8 +40,7 @@ func setupRegistry() {
 
 	key, _, err := registry.CreateKey(registry.CLASSES_ROOT, "beatsaver", registry.ALL_ACCESS)
 	if err != nil {
-		fmt.Println(err)
-		fmt.Scanln()
+		panic(err.Error())
 	}
 
 	key.SetStringValue("URL Protocol", "")
@@ -51,8 +49,7 @@ func setupRegistry() {
 	commandKey, _, err := registry.CreateKey(key, "shell\\open\\command", registry.ALL_ACCESS)
 	commandKey.SetStringValue("", fmt.Sprintf("\"%s\"", os.Args[0])+"\"%1\"")
 	if err != nil {
-		fmt.Println(err)
-		fmt.Scanln()
+		panic(err.Error())
 	}
 }
 
@@ -78,7 +75,7 @@ func InstallSong(songID string) {
 func setExportFolder() {
 	user, err := user.Current()
 	if err != nil {
-		panic(err)
+		panic(err.Error())
 	}
 
 	songFolder = user.HomeDir + "\\Documents\\Beat Saber Songs"
@@ -89,14 +86,14 @@ func getSongName(songID string) string {
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		log.Fatal(err)
+		panic(err.Error())
 	}
 
 	req.Header.Set("User-Agent", "Go One Click Installer")
 
 	res, err := client.Do(req)
 	if err != nil {
-		log.Fatal(err)
+		panic(err.Error())
 
 	}
 	if res.Body != nil {
@@ -105,12 +102,12 @@ func getSongName(songID string) string {
 
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		log.Fatal(err)
+		panic(err.Error())
 	}
 
 	jsonErr := json.Unmarshal(body, &mapDetails)
 	if jsonErr != nil {
-		log.Fatal(jsonErr)
+		panic(err.Error())
 	}
 
 	return fmt.Sprintf("(%s - %s)", mapDetails.Metadata.SongName, mapDetails.Metadata.LevelAuthorName)
@@ -127,21 +124,21 @@ func downloadSong(songID string) {
 
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Fatal(err)
+		panic(err.Error())
 	}
 
 	defer resp.Body.Close()
 
 	out, err := os.Create(filePath)
 	if err != nil {
-		fmt.Println(err)
+		panic(err.Error())
 	}
 
 	defer out.Close()
 
 	_, err = io.Copy(out, resp.Body)
 	if err != nil {
-		fmt.Println(err)
+		panic(err.Error())
 	}
 }
 
