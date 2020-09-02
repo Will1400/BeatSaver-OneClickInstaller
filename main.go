@@ -78,7 +78,7 @@ func setExportFolder() {
 		panic(err.Error())
 	}
 
-	songFolder = user.HomeDir + "\\Documents\\Beat Saber Songs"
+	songFolder = user.HomeDir + "\\Documents\\BeatSaber\\Beat Saber_Data\\CustomLevels\\"
 }
 
 func getSongName(songID string) string {
